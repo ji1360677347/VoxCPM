@@ -10,7 +10,7 @@
   <a href="https://voxcpm.readthedocs.io/zh-cn/latest/"><img src="https://img.shields.io/badge/Docs-ReadTheDocs-8CA1AF" alt="Documentation"></a>
   <a href="https://huggingface.co/openbmb/VoxCPM2"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-VoxCPM2-yellow" alt="Hugging Face"></a>
   <a href="https://modelscope.cn/models/OpenBMB/VoxCPM2"><img src="https://img.shields.io/badge/ModelScope-VoxCPM2-purple" alt="ModelScope"></a>
-  <a href="https://openbmb.github.io/voxcpm2-demopage/"><img src="https://img.shields.io/badge/DemoPage-Audio Samples-red"></a>
+  <a href="https://openbmb.github.io/voxcpm2-demopage/"><img src="https://img.shields.io/badge/DemoPage-Audio Samples-red" alt="DemoPage"></a>
   
 </p>
 
@@ -110,6 +110,7 @@ wav = model.generate(
     text="VoxCPM2 是目前推荐使用的多语言语音合成版本。",
     cfg_value=2.0,
     inference_timesteps=10,
+    seed=42,
 )
 sf.write("demo.wav", wav, model.tts_model.sample_rate)
 print("已保存: demo.wav")
@@ -133,6 +134,7 @@ wav = model.generate(
     text="VoxCPM2 是目前推荐使用的多语言语音合成版本。",
     cfg_value=2.0,
     inference_timesteps=10,
+    seed=42,
 )
 sf.write("demo.wav", wav, model.tts_model.sample_rate)
 ```
@@ -146,6 +148,7 @@ wav = model.generate(
     text="(年轻女性，声音温柔甜美)你好，欢迎使用VoxCPM2！",
     cfg_value=2.0,
     inference_timesteps=10,
+    seed=42,
 )
 sf.write("voice_design.wav", wav, model.tts_model.sample_rate)
 ```
@@ -166,6 +169,7 @@ wav = model.generate(
     reference_wav_path="path/to/voice.wav",
     cfg_value=2.0,
     inference_timesteps=10,
+    seed=42,
 )
 sf.write("controllable_clone.wav", wav, model.tts_model.sample_rate)
 ```
@@ -212,6 +216,7 @@ voxcpm design \
 voxcpm design \
   --text "VoxCPM2带来全新语音合成体验。" \
   --control "年轻女声，温暖温柔，略带微笑" \
+  --seed 42 \
   --output out.wav
 
 # 声音克隆（参考音频）

@@ -676,3 +676,61 @@ def test_detect_model_architecture_uses_local_configs():
 
     assert cli.detect_model_architecture(v1_args) == "voxcpm"
     assert cli.detect_model_architecture(v2_args) == "voxcpm2"
+
+
+def test_parser_accepts_seed():
+    parser = cli._build_parser()
+    # Default seed should be None
+    args = parser.parse_args(["design", "--text", "hello", "--output", "out.wav"])
+    assert args.seed is None
+
+    # Custom seed should be parsed as int
+    args = parser.parse_args(["design", "--text", "hello", "--output", "out.wav", "--seed", "42"])
+    assert args.seed == 42
+
+
+def test_design_subcommand_passes_seed(monkeypatch, tmp_path):
+    dummy_model = DummyModel()
+    monkeypatch.setattr(cli, "load_model", lambda args: dummy_model)
+    patch_soundfile_write(monkeypatch)
+
+    run_main(
+        monkeypatch,
+        [
+            "design",
+            "--text",
+            "hello",
+            "--seed",
+            "123",
+            "--output",
+            str(tmp_path / "out.wav"),
+        ],
+    )
+
+    assert dummy_model.calls[0]["seed"] == 123
+
+
+def test_batch_subcommand_passes_seed(monkeypatch, tmp_path):
+    dummy_model = DummyModel()
+    input_file = tmp_path / "texts.txt"
+    input_file.write_text("hello\nworld\n", encoding="utf-8")
+
+    monkeypatch.setattr(cli, "load_model", lambda args: dummy_model)
+    patch_soundfile_write(monkeypatch)
+
+    run_main(
+        monkeypatch,
+        [
+            "batch",
+            "--input",
+            str(input_file),
+            "--output-dir",
+            str(tmp_path / "outs"),
+            "--seed",
+            "999",
+        ],
+    )
+
+    assert len(dummy_model.calls) == 2
+    assert dummy_model.calls[0]["seed"] == 999
+    assert dummy_model.calls[1]["seed"] == 999
